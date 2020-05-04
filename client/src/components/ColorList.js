@@ -32,17 +32,16 @@ const ColorList = ({ colors, updateColors }) => {
       .catch((error) => {
         console.log(error);
       });
+    window.location.reload();
   };
 
   const deleteColor = (color) => {
     axiosWithAuth()
       .delete(`/colors/${color.id}`)
-      .then((res) => {
-        updateColors(res.data);
-      })
       .catch((error) => {
         console.log(error);
       });
+    window.location.reload(true);
   };
 
   const addColor = (e) => {
@@ -64,7 +63,9 @@ const ColorList = ({ colors, updateColors }) => {
     });
   };
 
-  return (
+  return colors.length < 1 ? (
+    <h2> Loading</h2>
+  ) : (
     <div className="colors-wrap">
       <p>colors</p>
       <ul>
@@ -74,7 +75,7 @@ const ColorList = ({ colors, updateColors }) => {
               <span
                 className="delete"
                 onClick={(e) => {
-                  e.stopPropagation();
+                  // e.stopPropagation();
                   deleteColor(color);
                 }}
               >
