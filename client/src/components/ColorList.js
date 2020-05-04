@@ -39,6 +39,9 @@ const ColorList = ({ colors, updateColors }) => {
       .delete(`/colors/${color.id}`)
       .then((res) => {
         updateColors(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   };
 
