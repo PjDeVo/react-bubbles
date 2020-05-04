@@ -1,16 +1,20 @@
 import React, { useState } from "react";
-import axios from "axios";
+
 import { axiosWithAuth } from "../utilities/axiosWithAuth";
 
 const initialColor = {
   color: "",
   code: { hex: "" },
 };
+const addedColor = {
+  color: "",
+  code: { hex: "" },
+};
 
 const ColorList = ({ colors, updateColors }) => {
-  console.log(colors);
   const [editing, setEditing] = useState(false);
   const [colorToEdit, setColorToEdit] = useState(initialColor);
+  const [colorBeingAdded, setAddedColor] = useState(addedColor);
 
   const editColor = (color) => {
     setEditing(true);
@@ -28,9 +32,6 @@ const ColorList = ({ colors, updateColors }) => {
       .catch((error) => {
         console.log(error);
       });
-    // Make a put request to save your updated color
-    // think about where will you get the id from...
-    // where is is saved right now?
   };
 
   const deleteColor = (color) => {
@@ -39,6 +40,25 @@ const ColorList = ({ colors, updateColors }) => {
       .then((res) => {
         updateColors(res.data);
       });
+  };
+
+  const addColor = (e) => {
+    e.preventDefault();
+    axiosWithAuth()
+      .post("/colors", colorBeingAdded)
+      .then((res) => {
+        updateColors(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const handleAddedColorChanges = (e) => {
+    setAddedColor({
+      ...colorBeingAdded,
+      [e.target.name]: e.target.value,
+    });
   };
 
   return (
@@ -98,7 +118,26 @@ const ColorList = ({ colors, updateColors }) => {
         </form>
       )}
       <div className="spacer" />
-      {/* stretch - build another form here to add a color */}
+      <form onSubmit={addColor}>
+        <label> Color Name</label>
+        <input
+          name="color"
+          value={colorBeingAdded.name}
+          onChange={handleAddedColorChanges}
+        />
+        <label> Hex Code</label>
+        <input
+          name="code"
+          value={colorBeingAdded.code.hex}
+          onChange={(e) =>
+            setAddedColor({
+              ...colorBeingAdded,
+              code: { hex: e.target.value },
+            })
+          }
+        />
+      </form>
+      <button onClick={addColor}> Add</button>
     </div>
   );
 };
